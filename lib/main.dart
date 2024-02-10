@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         backgroundColor: Colors.indigo,
         body: Center(
           child: Text(
-              'Hello Welcome to To do Application for both Andorid and iOS'),
+              'To do Application'),
         ),
       ),
     );
