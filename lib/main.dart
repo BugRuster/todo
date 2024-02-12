@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'Login/LoginPage.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 
@@ -10,18 +12,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("To - Do "),
-          backgroundColor: Colors.deepOrange,
-        ),
-        backgroundColor: Colors.indigo,
-        body: Center(
-          child: Text(
-              'To do Application'),
-        ),
+    return GetMaterialApp(
+      title: 'To-Do Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      home: LoginPage(),
     );
   }
 }
