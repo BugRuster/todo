@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:todo/SignUp/SignUp_Page_Name.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'pa';
 void main() {
   runApp(MyApp());
 }
@@ -55,7 +56,10 @@ class LoginPage extends StatelessWidget {
               // Login button
               ElevatedButton(
                 onPressed: () {
-                  // Add your login logic here
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
                 },
                 child: Text('Login'),
               ),
@@ -74,7 +78,11 @@ class LoginPage extends StatelessWidget {
               // Sign Up button
               TextButton(
                 onPressed: () {
-                  // Add your sign-up logic here
+                  print("button Pressed for SignUp Page");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignUpPage()),
+                  );
                 },
                 child: Text('Sign Up'),
               ),
