@@ -101,7 +101,7 @@ class LoginPage extends StatelessWidget {
                       '© BugRuster',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey, // Change the color as needed
+                        color: Colors.grey,
                       ),
                     ),
                   ),

@@ -61,9 +61,7 @@ class _SignUpPageState extends State<SignUpPage> {
             SizedBox(height: 24.0),
             ElevatedButton(
               onPressed: () {
-                // Implement your signup/authentication logic here
-                // You can access entered data using _nameController.text, _emailController.text, _passwordController.text
-                // For example, you can print the values to the console
+
                 print('Name: ${_nameController.text}');
                 print('Email: ${_emailController.text}');
                 print('Password: ${_passwordController.text}');
@@ -74,7 +72,6 @@ class _SignUpPageState extends State<SignUpPage> {
             // Google Login Button
             GestureDetector(
               onTap: () {
-                // Implement Google login logic here
                 print('Login with Google');
               },
               child: Container(
@@ -93,11 +90,9 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
             ),
             SizedBox(height: 16.0),
-
-            // Copyright text with clickable link
             GestureDetector(
               onTap: () {
-                _launchURL('https://www.bugruster.live'); // Replace with your website URL
+                _launchURL('https://www.bugruster.live');
               },
               child: Container(
                 child: Center(
@@ -105,7 +100,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     '© BugRuster',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey, // Change the color as needed
+                      color: Colors.grey,
                     ),
                   ),
                 ),
