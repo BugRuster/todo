@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:todo/Login/OTP.dart';
 
 
 void main() {
@@ -65,6 +66,10 @@ class _SignUpPageState extends State<SignUpPage> {
                 print('Name: ${_nameController.text}');
                 print('Email: ${_emailController.text}');
                 print('Password: ${_passwordController.text}');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => OTPScreen()),
+                );
               },
               child: Text('Sign Up'),
             ),
