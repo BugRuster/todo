@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:todo/AppScreensMain/HomeScreen.dart';
-import 'package:todo/AppScreensMain/MSG_What.dart';
+import 'package:todo/AppScreensMain/HomeScreen.dart';
 
 void main() {
   runApp(OTPScreen());
@@ -54,7 +54,7 @@ class OTPScreen extends StatelessWidget {
 
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MSG_What()),
+                    MaterialPageRoute(builder: (context) => HomeScreen1()),
                   );
                 },
                 child: Text('Verify OTP'),

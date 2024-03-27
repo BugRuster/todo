@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MSG_What());
+  runApp(HomeScreen1());
 }
 
-class MSG_What extends StatelessWidget {
+class HomeScreen1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -79,8 +79,13 @@ class AddScreen extends StatelessWidget {
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('Home Screen'),
+    return Scaffold(
+      body: Container(
+
+        child: Center(
+          child: Text('Home Screen'),
+        ),
+      ),
     );
   }
 }
