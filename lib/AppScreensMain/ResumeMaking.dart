@@ -155,7 +155,7 @@ class _ResumeFormPageState extends State<ResumeFormPage> {
                     );
                   }
                 },
-                child: Text('Submit'),
+                child: Text('Next'),
               ),
             ],
           ),
