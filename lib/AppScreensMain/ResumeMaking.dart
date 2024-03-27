@@ -184,7 +184,7 @@ class _ResumeFormPageState extends State<ResumeFormPage> {
                     );
                   }
                 },
-                child: Text('Next'),
+                child: Text("Generate Resume"),
               ),
             ],
           ),
