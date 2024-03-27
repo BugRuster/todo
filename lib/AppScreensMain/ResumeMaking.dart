@@ -34,6 +34,10 @@ class _ResumeFormPageState extends State<ResumeFormPage> {
   String? _degree;
   String? _branch;
   String? _graduationYear;
+  String? _schooling;
+  String? _skills;
+  String? _linkedin;
+  String? _numOfProjects;
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +125,31 @@ class _ResumeFormPageState extends State<ResumeFormPage> {
                 },
                 onSaved: (value) {
                   _graduationYear = value;
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Schooling'),
+                onSaved: (value) {
+                  _schooling = value;
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Skills'),
+                onSaved: (value) {
+                  _skills = value;
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'LinkedIn'),
+                onSaved: (value) {
+                  _linkedin = value;
+                },
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                    labelText: 'Number of Projects Completed'),
+                onSaved: (value) {
+                  _numOfProjects = value;
                 },
               ),
               SizedBox(height: 20),
