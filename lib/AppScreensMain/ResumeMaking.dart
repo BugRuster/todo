@@ -26,14 +26,14 @@ class _ResumeFormPageState extends State<ResumeFormPage> {
   final _formKey = GlobalKey<FormState>();
 
   // Variables to store form values
-  String _name = '';
-  String _email = '';
-  String _phoneNumber = '';
-  String _address = '';
-  String _college = '';
-  String _degree = '';
-  String _branch = '';
-  String _graduationYear = '';
+  String? _name;
+  String? _email;
+  String? _phoneNumber;
+  String? _address;
+  String? _college;
+  String? _degree;
+  String? _branch;
+  String? _graduationYear;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class _ResumeFormPageState extends State<ResumeFormPage> {
               TextFormField(
                 decoration: InputDecoration(labelText: 'Name'),
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value?.isEmpty ?? true) {
                     return 'Please enter your name';
                   }
                   return null;
@@ -62,7 +62,7 @@ class _ResumeFormPageState extends State<ResumeFormPage> {
               TextFormField(
                 decoration: InputDecoration(labelText: 'Email'),
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value?.isEmpty ?? true) {
                     return 'Please enter your email';
                   }
                   // Add email format validation if needed
@@ -75,7 +75,7 @@ class _ResumeFormPageState extends State<ResumeFormPage> {
               TextFormField(
                 decoration: InputDecoration(labelText: 'Phone Number'),
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value?.isEmpty ?? true) {
                     return 'Please enter your phone number';
                   }
                   // Add phone number format validation if needed
@@ -113,7 +113,7 @@ class _ResumeFormPageState extends State<ResumeFormPage> {
                 decoration:
                 InputDecoration(labelText: 'Graduation Year (yyyy)'),
                 validator: (value) {
-                  if (value.isEmpty) {
+                  if (value?.isEmpty ?? true) {
                     return 'Please enter your graduation year';
                   }
                   // Add graduation year format validation if needed
@@ -124,10 +124,10 @@ class _ResumeFormPageState extends State<ResumeFormPage> {
                 },
               ),
               SizedBox(height: 20),
-              RaisedButton(
+              ElevatedButton(
                 onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    _formKey.currentState.save();
+                  if (_formKey.currentState?.validate() ?? false) {
+                    _formKey.currentState?.save();
                     // Process the form data here (e.g., save to database)
                     // Display a confirmation message or navigate to the next screen
                     showDialog(
@@ -143,7 +143,7 @@ class _ResumeFormPageState extends State<ResumeFormPage> {
                             ),
                           ),
                           actions: <Widget>[
-                            FlatButton(
+                            TextButton(
                               child: Text('OK'),
                               onPressed: () {
                                 Navigator.of(context).pop();

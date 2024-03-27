@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo/AppScreensMain/ResumeMaking.dart';
 
 void main() {
   runApp(HomeScreen1());
@@ -80,15 +81,29 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-
-        child: Center(
-          child: Text('Home Screen'),
-        ),
+      body: Column(
+        children: [
+          Center(
+            child: Text('Home Screen'),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ResumeForm()),
+              );
+            },
+            child: Text('Create Resume'),
+          ),
+        ],
       ),
     );
   }
 }
+
 
 class SettingsScreen extends StatelessWidget {
   @override
