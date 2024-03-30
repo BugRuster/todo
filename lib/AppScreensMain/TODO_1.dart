@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 class TODO1 extends StatelessWidget {
   const TODO1({super.key});
 
-  bool Personal = true, College = false, Home = false;
+  // bool Personal = true, College = false, Home = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,35 +51,21 @@ class TODO1 extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Personal
-                  ? Material(
-                      elevation: 5,
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          "Personal",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    )
-                  : GestureDetector(
-                      onTap: () {
-                        Personal = true;
-                        College = false;
-                        Home = false;
-                        // setState(() {});
-                      },
-                      child: Text(
-                        "Personal",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
+              Material(
+                elevation: 5,
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    "Personal",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+              ),
               Container(
                 child: Text(
                   "College",
