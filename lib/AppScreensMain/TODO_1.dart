@@ -12,9 +12,22 @@ class TODO_1 extends StatefulWidget {
 
 class _TODO_1State extends State<TODO_1> {
   bool Personal = true, College = false, Home = false;
+  bool suggest = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
+        splashColor: Colors.lightBlueAccent,
+        onPressed: () {
+
+        },
+        child: Icon(
+          Icons.add,
+          color: Colors.blue,
+          size: 35,
+        ),
+      ),
       body: Container(
         padding: EdgeInsets.only(top: 70, left: 20, right: 20, bottom: 20),
         height: MediaQuery.of(context).size.height,
@@ -147,6 +160,29 @@ class _TODO_1State extends State<TODO_1> {
                   ),
                 ),
               ],
+            ),
+            SizedBox(height: 30),
+            CheckboxListTile(
+              activeColor: Colors.white,
+              checkColor: Colors.blue,
+              title: Text("Suggest me tasks"),
+              value: suggest, onChanged: (newValues){
+              setState(() {
+                suggest = newValues!;
+              });
+            },
+              controlAffinity: ListTileControlAffinity.leading,
+            ),
+            CheckboxListTile(
+              activeColor: Colors.white,
+              checkColor: Colors.blue,
+              title: Text("Let's do some Code !"),
+              value: suggest, onChanged: (newValues){
+              setState(() {
+                suggest = newValues!;
+              });
+            },
+              controlAffinity: ListTileControlAffinity.leading,
             ),
           ],
         ),
