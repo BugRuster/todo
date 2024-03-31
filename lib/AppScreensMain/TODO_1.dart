@@ -191,24 +191,44 @@ class _TODO_1State extends State<TODO_1> {
   }
   openBox() {
     return showDialog(context: context, builder: (context)=> AlertDialog(
-      title: Text("Add Task"),
-      content: Container(
-        child: Column(
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                hintText: "Enter Task",
+      content: SingleChildScrollView(
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Icon(Icons.arrow_back_ios),
+                ),
+                SizedBox(width: 20),
+                Text("Add Task", style: TextStyle(fontSize: 20),),
+              ],),
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: "Enter Task",
+                  ),
+                ),
               ),
-            ),
-            SizedBox(height: 10),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text("Add Task"),
-            ),
-          ],
+              SizedBox(height: 10),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("Add Task"),
+              ),
+            ],
+          ),
         ),
       ),
     ));
