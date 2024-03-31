@@ -20,7 +20,7 @@ class _TODO_1State extends State<TODO_1> {
         backgroundColor: Colors.white,
         splashColor: Colors.lightBlueAccent,
         onPressed: () {
-
+          openBox();
         },
         child: Icon(
           Icons.add,
@@ -188,5 +188,29 @@ class _TODO_1State extends State<TODO_1> {
         ),
       ),
     );
+  }
+  openBox() {
+    return showDialog(context: context, builder: (context)=> AlertDialog(
+      title: Text("Add Task"),
+      content: Container(
+        child: Column(
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                hintText: "Enter Task",
+              ),
+            ),
+            SizedBox(height: 10),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("Add Task"),
+            ),
+          ],
+        ),
+      ),
+    ));
   }
 }
