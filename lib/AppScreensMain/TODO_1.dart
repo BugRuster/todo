@@ -13,6 +13,7 @@ class TODO_1 extends StatefulWidget {
 class _TODO_1State extends State<TODO_1> {
   bool Personal = true, College = false, Home = false;
   bool suggest = false;
+  TextEditingController task = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,7 +166,7 @@ class _TODO_1State extends State<TODO_1> {
             CheckboxListTile(
               activeColor: Colors.white,
               checkColor: Colors.blue,
-              title: Text("Suggest me tasks"),
+              title: Text("Suggest me tasks", style: TextStyle(color: Colors.white),),
               value: suggest, onChanged: (newValues){
               setState(() {
                 suggest = newValues!;
@@ -176,7 +177,7 @@ class _TODO_1State extends State<TODO_1> {
             CheckboxListTile(
               activeColor: Colors.white,
               checkColor: Colors.blue,
-              title: Text("Let's do some Code !"),
+              title: Text("Let's do some Code !", style: TextStyle(color: Colors.white),),
               value: suggest, onChanged: (newValues){
               setState(() {
                 suggest = newValues!;
@@ -206,7 +207,7 @@ class _TODO_1State extends State<TODO_1> {
                 SizedBox(width: 20),
                 Text("Add Task", style: TextStyle(fontSize: 20),),
               ],),
-              SizedBox(height: 10),
+              SizedBox(height: 20),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 decoration: BoxDecoration(
@@ -214,18 +215,20 @@ class _TODO_1State extends State<TODO_1> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: TextField(
+                  controller: task,
                   decoration: InputDecoration(
                     hintText: "Enter Task",
                   ),
                 ),
               ),
-              SizedBox(height: 10),
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text("Add Task"),
+              SizedBox(height: 20),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("Add Task"),
+                ),
               ),
             ],
           ),
