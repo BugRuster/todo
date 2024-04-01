@@ -31,4 +31,10 @@ class DatabaseService {
         .doc(id)
         .update({"Yes": true});
   }
+  removeMethod(String id, String task) async {
+    return await FirebaseFirestore.instance
+        .collection(task)
+        .doc(id)
+        .delete();
+  }
 }

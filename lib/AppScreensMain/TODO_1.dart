@@ -58,6 +58,16 @@ class _TODO_1State extends State<TODO_1> {
                               : College
                                   ? "College"
                                   : "Home");
+                          setState(() {
+                            Future.delayed(Duration(seconds: 5), () {
+                              DatabaseService().removeMethod(docSnap["Id"], Personal
+                                  ? "Personal"
+                                  : College
+                                  ? "College"
+                                  : "Home");
+                            });
+
+                          });
                           getonTheLoad();
                         });
                       },
