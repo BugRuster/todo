@@ -18,8 +18,11 @@ class DatabaseService {
   Future addHomeTask(
       Map<String, dynamic> userPersonalMap, String id) async {
     return await FirebaseFirestore.instance
-        .collection('Homne')
+        .collection('Home')
         .doc(id)
         .set(userPersonalMap);
+  }
+  Future <Stream<QuerySnapshot>> getTask(String task) async {
+    return await FirebaseFirestore.instance.collection(task).snapshots();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -17,6 +18,56 @@ class _TODO_1State extends State<TODO_1> {
   bool Personal = true, College = false, Home = false;
   bool suggest = false;
   TextEditingController task = TextEditingController();
+  Stream? todoStream;
+
+  getonTheLoad() async {
+    todoStream = await DatabaseService().getTask(Personal
+        ? "Personal"
+        : College
+            ? "College"
+            : "Home"
+    );
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  Widget getWork() {
+    return StreamBuilder(
+      stream: todoStream,
+      builder: (context, AsyncSnapshot snapshot) {
+        return snapshot.hasData
+            ? Expanded(
+                child: ListView.builder(
+                  itemCount: snapshot.data.docs.length,
+                  itemBuilder: (context, index) {
+                    DocumentSnapshot docSnap = snapshot.data.docs[index];
+                    return CheckboxListTile(
+                      activeColor: Colors.white,
+                      checkColor: Colors.blue,
+                      title: Text(docSnap["task"]),
+                      value: suggest,
+                      onChanged: (newValues) {
+                        setState(() {
+                          suggest = newValues!;
+                        });
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                    );
+                  },
+                ),
+              )
+            : Center(
+                child: CircularProgressIndicator(),
+              );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,13 +142,15 @@ class _TODO_1State extends State<TODO_1> {
                         ),
                       )
                     : GestureDetector(
-                        onTap: () {
-                          setState(() {
+                        onTap: () async {
                             Personal = true;
                             College = false;
                             Home = false;
-                            setState(() {});
-                          });
+                            await getonTheLoad();
+                            setState(() {
+
+                            });
+
                         },
                         child: Text(
                           "Personal",
@@ -122,13 +175,14 @@ class _TODO_1State extends State<TODO_1> {
                         ),
                       )
                     : GestureDetector(
-                        onTap: () {
-                          setState(() {
+                        onTap: () async {
                             Personal = false;
                             College = true;
                             Home = false;
-                            setState(() {});
-                          });
+                            await getonTheLoad();
+                            setState(() {
+
+                            });
                         },
                         child: Text(
                           "College",
@@ -153,13 +207,14 @@ class _TODO_1State extends State<TODO_1> {
                         ),
                       )
                     : GestureDetector(
-                        onTap: () {
-                          setState(() {
+                        onTap: () async {
                             Personal = false;
                             College = false;
                             Home = true;
-                            setState(() {});
-                          });
+                            await getonTheLoad();
+                            setState(() {
+
+                            });
                         },
                         child: Text(
                           "Home",
@@ -169,43 +224,14 @@ class _TODO_1State extends State<TODO_1> {
               ],
             ),
             SizedBox(height: 30),
-            CheckboxListTile(
-              activeColor: Colors.white,
-              checkColor: Colors.blue,
-              title: Text(
-                "Suggest me tasks",
-                style: TextStyle(color: Colors.white),
-              ),
-              value: suggest,
-              onChanged: (newValues) {
-                setState(() {
-                  suggest = newValues!;
-                });
-              },
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
-            CheckboxListTile(
-              activeColor: Colors.white,
-              checkColor: Colors.blue,
-              title: Text(
-                "Let's do some Code !",
-                style: TextStyle(color: Colors.white),
-              ),
-              value: suggest,
-              onChanged: (newValues) {
-                setState(() {
-                  suggest = newValues!;
-                });
-              },
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
+            getWork(),
           ],
         ),
       ),
     );
   }
 
-  openBox() {
+  Future openBox() {
     return showDialog(
         context: context,
         builder: (context) => AlertDialog(
