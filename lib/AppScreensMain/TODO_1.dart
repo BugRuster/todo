@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:random_string/random_string.dart';
+
+import '../DatabaseFiles/DataBase.dart';
 
 class TODO_1 extends StatefulWidget {
   const TODO_1({super.key});
@@ -70,119 +73,130 @@ class _TODO_1State extends State<TODO_1> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Personal ? Material(
-                  elevation: 5,
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      "Personal",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ) : GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      Personal = true;
-                      College = false;
-                      Home = false;
-                      setState(() {
-
-                      });
-                    });
-                  },
-                  child: Text(
-                    "Personal",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-                College ? Material(
-                  elevation: 5,
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      "College",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ) : GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      Personal = false;
-                      College = true;
-                      Home = false;
-                      setState(() {
-
-                      });
-                    });
-                  },
-                  child: Text(
-                    "College",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-                Home ? Material(
-                  elevation: 5,
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      "Home",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ) : GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      Personal = false;
-                      College = false;
-                      Home = true;
-                      setState(() {
-
-                      });
-                    });
-                  },
-                  child: Text(
-                    "Home",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
+                Personal
+                    ? Material(
+                        elevation: 5,
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            "Personal",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            Personal = true;
+                            College = false;
+                            Home = false;
+                            setState(() {});
+                          });
+                        },
+                        child: Text(
+                          "Personal",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                College
+                    ? Material(
+                        elevation: 5,
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            "College",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            Personal = false;
+                            College = true;
+                            Home = false;
+                            setState(() {});
+                          });
+                        },
+                        child: Text(
+                          "College",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                Home
+                    ? Material(
+                        elevation: 5,
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            "Home",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            Personal = false;
+                            College = false;
+                            Home = true;
+                            setState(() {});
+                          });
+                        },
+                        child: Text(
+                          "Home",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
               ],
             ),
             SizedBox(height: 30),
             CheckboxListTile(
               activeColor: Colors.white,
               checkColor: Colors.blue,
-              title: Text("Suggest me tasks", style: TextStyle(color: Colors.white),),
-              value: suggest, onChanged: (newValues){
-              setState(() {
-                suggest = newValues!;
-              });
-            },
+              title: Text(
+                "Suggest me tasks",
+                style: TextStyle(color: Colors.white),
+              ),
+              value: suggest,
+              onChanged: (newValues) {
+                setState(() {
+                  suggest = newValues!;
+                });
+              },
               controlAffinity: ListTileControlAffinity.leading,
             ),
             CheckboxListTile(
               activeColor: Colors.white,
               checkColor: Colors.blue,
-              title: Text("Let's do some Code !", style: TextStyle(color: Colors.white),),
-              value: suggest, onChanged: (newValues){
-              setState(() {
-                suggest = newValues!;
-              });
-            },
+              title: Text(
+                "Let's do some Code !",
+                style: TextStyle(color: Colors.white),
+              ),
+              value: suggest,
+              onChanged: (newValues) {
+                setState(() {
+                  suggest = newValues!;
+                });
+              },
               controlAffinity: ListTileControlAffinity.leading,
             ),
           ],
@@ -190,50 +204,71 @@ class _TODO_1State extends State<TODO_1> {
       ),
     );
   }
+
   openBox() {
-    return showDialog(context: context, builder: (context)=> AlertDialog(
-      content: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Icon(Icons.arrow_back_ios),
-                ),
-                SizedBox(width: 20),
-                Text("Add Task", style: TextStyle(fontSize: 20),),
-              ],),
-              SizedBox(height: 20),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: TextField(
-                  controller: task,
-                  decoration: InputDecoration(
-                    hintText: "Enter Task",
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              content: SingleChildScrollView(
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Icon(Icons.arrow_back_ios),
+                          ),
+                          SizedBox(width: 20),
+                          Text(
+                            "Add Task",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: TextField(
+                          controller: task,
+                          decoration: InputDecoration(
+                            hintText: "Enter Task",
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            String id = randomAlphaNumeric(10);
+                            Map<String, dynamic> userTodo = {
+                              "task": task.text,
+                              "Id": id,
+                            };
+                            Personal
+                                ? DatabaseService()
+                                    .addPersonalTask(userTodo, id)
+                                : College
+                                    ? DatabaseService()
+                                        .addCollegeTask(userTodo, id)
+                                    : DatabaseService()
+                                        .addHomeTask(userTodo, id);
+                            Navigator.pop(context);
+                          },
+                          child: Text("Add Task"),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              SizedBox(height: 20),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("Add Task"),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ));
+            ));
   }
 }
