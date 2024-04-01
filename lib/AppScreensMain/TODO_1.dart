@@ -50,10 +50,15 @@ class _TODO_1State extends State<TODO_1> {
                       activeColor: Colors.white,
                       checkColor: Colors.blue,
                       title: Text(docSnap["task"]),
-                      value: suggest,
+                      value: docSnap["Yes"],
                       onChanged: (newValues) {
-                        setState(() {
-                          suggest = newValues!;
+                        setState(() async{
+                          await DatabaseService().tickMethod(docSnap["Id"], Personal
+                              ? "Personal"
+                              : College
+                                  ? "College"
+                                  : "Home");
+                          getonTheLoad();
                         });
                       },
                       controlAffinity: ListTileControlAffinity.leading,
@@ -277,6 +282,7 @@ class _TODO_1State extends State<TODO_1> {
                             Map<String, dynamic> userTodo = {
                               "task": task.text,
                               "Id": id,
+                              "Yes": false,
                             };
                             Personal
                                 ? DatabaseService()

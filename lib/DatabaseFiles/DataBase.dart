@@ -25,4 +25,10 @@ class DatabaseService {
   Future <Stream<QuerySnapshot>> getTask(String task) async {
     return await FirebaseFirestore.instance.collection(task).snapshots();
   }
+  tickMethod(String id, String task) async {
+    return await FirebaseFirestore.instance
+        .collection(task)
+        .doc(id)
+        .update({"Yes": true});
+  }
 }
