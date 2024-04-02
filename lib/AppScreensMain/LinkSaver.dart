@@ -90,7 +90,6 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
   }
 
   void _showLinkDetails(LinkItem link) {
-    // Show details of the link in a dialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
