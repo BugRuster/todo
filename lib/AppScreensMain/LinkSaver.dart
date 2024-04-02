@@ -19,6 +19,14 @@ class LinkSaver extends StatelessWidget {
   }
 }
 
+class LinkItem {
+  String url;
+  String title;
+  String category;
+
+  LinkItem({required this.url, required this.title, required this.category});
+}
+
 class LinkSaverHome extends StatefulWidget {
   @override
   _LinkSaverHomeState createState() => _LinkSaverHomeState();
@@ -27,7 +35,7 @@ class LinkSaverHome extends StatefulWidget {
 class _LinkSaverHomeState extends State<LinkSaverHome> {
   List<LinkItem> links = [
     LinkItem(url: 'https://example.com', title: 'Example', category: 'Tutorial'),
-    // Add more dummy links here for demonstration
+    // You can add more initial links here for demonstration
   ];
 
   @override
@@ -48,39 +56,55 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
                 label: Text(links[index].category),
                 backgroundColor: Colors.blueGrey,
               ),
+              onTap: () => _showLinkDetails(links[index]),
             ),
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Implement link adding functionality
-        },
+        onPressed: _addNewLink,
         child: Icon(Icons.add),
         backgroundColor: Colors.blueGrey,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Links',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-        selectedItemColor: Colors.amber[800],
-        backgroundColor: Colors.blueGrey,
-      ),
+      // Bottom navigation bar or other widgets can be added here
     );
   }
-}
 
-class LinkItem {
-  String url;
-  String title;
-  String category;
+  void _addNewLink() {
+    // Open a dialog to add a new link
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Add New Link"),
+          content: Text("Implement your link adding functionality here."),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Close"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-  LinkItem({required this.url, required this.title, required this.category});
+  void _showLinkDetails(LinkItem link) {
+    // Show details of the link in a dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(link.title),
+          content: Text("URL: ${link.url}\nCategory: ${link.category}"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Close"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
