@@ -35,6 +35,7 @@ class LinkSaverHome extends StatefulWidget {
 class _LinkSaverHomeState extends State<LinkSaverHome> {
   List<LinkItem> links = [
     LinkItem(url: 'https://example.com', title: 'Example', category: 'Tutorial'),
+    // You can add more initial links here for demonstration
   ];
 
   @override
@@ -65,6 +66,7 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
         child: Icon(Icons.add),
         backgroundColor: Colors.blueGrey,
       ),
+      // Bottom navigation bar or other widgets can be added here
     );
   }
 
@@ -88,6 +90,7 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
   }
 
   void _showLinkDetails(LinkItem link) {
+    // Show details of the link in a dialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
