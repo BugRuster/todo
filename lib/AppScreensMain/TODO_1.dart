@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
 import 'package:random_string/random_string.dart';
 
 import '../DatabaseFiles/DataBase.dart';
@@ -314,3 +313,4 @@ class _TODO_1State extends State<TODO_1> {
             ));
   }
 }
+// this code is done only for To-Do functionality
