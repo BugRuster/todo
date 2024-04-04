@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
+import '../DatabaseFiles/DataBase.dart';
 
 void main() {
   runApp(LinkSaver());
@@ -33,9 +36,11 @@ class LinkSaverHome extends StatefulWidget {
 }
 
 class _LinkSaverHomeState extends State<LinkSaverHome> {
-  List<LinkItem> links = [
-    LinkItem(url: 'https://example.com', title: 'Example', category: 'Tutorial'),
-  ];
+  final DatabaseService _databaseService = DatabaseService();
+  String selectedCategory = 'General'; // Default category or dynamic selection
+  TextEditingController urlController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
+  TextEditingController categoryController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -43,20 +48,36 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
       appBar: AppBar(
         title: Text('Link Saver'),
       ),
-      body: ListView.builder(
-        itemCount: links.length,
-        itemBuilder: (context, index) {
-          return Card(
-            margin: EdgeInsets.all(8),
-            child: ListTile(
-              title: Text(links[index].title, style: TextStyle(color: Colors.white)),
-              subtitle: Text(links[index].url, style: TextStyle(color: Colors.grey)),
-              trailing: Chip(
-                label: Text(links[index].category),
-                backgroundColor: Colors.blueGrey,
-              ),
-              onTap: () => _showLinkDetails(links[index]),
-            ),
+      body: StreamBuilder(
+        stream: _databaseService.getLinks(selectedCategory),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          }
+          var links = snapshot.data?.docs.map((doc) => LinkItem(
+            url: doc['url'],
+            title: doc['title'],
+            category: doc['category'],
+          )).toList() ?? [];
+
+          return ListView.builder(
+            itemCount: links.length,
+            itemBuilder: (context, index) {
+              return Card(
+                margin: EdgeInsets.all(8),
+                child: ListTile(
+                  title: Text(links[index].title, style: TextStyle(color: Colors.white)),
+                  subtitle: Text(links[index].url, style: TextStyle(color: Colors.grey)),
+                  trailing: Chip(
+                    label: Text(links[index].category),
+                    backgroundColor: Colors.blueGrey,
+                  ),
+                ),
+              );
+            },
           );
         },
       ),
@@ -69,35 +90,50 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
   }
 
   void _addNewLink() {
-    // Open a dialog to add a new link
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Add New Link"),
-          content: Text("Implement your link adding functionality here."),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                controller: titleController,
+                decoration: InputDecoration(hintText: "Enter Title"),
+              ),
+              TextField(
+                controller: urlController,
+                decoration: InputDecoration(hintText: "Enter URL"),
+              ),
+              TextField(
+                controller: categoryController,
+                decoration: InputDecoration(hintText: "Enter Category"),
+              ),
+            ],
+          ),
           actions: <Widget>[
             TextButton(
               child: Text("Close"),
               onPressed: () => Navigator.of(context).pop(),
             ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showLinkDetails(LinkItem link) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(link.title),
-          content: Text("URL: ${link.url}\nCategory: ${link.category}"),
-          actions: <Widget>[
             TextButton(
-              child: Text("Close"),
-              onPressed: () => Navigator.of(context).pop(),
+              child: Text("Save"),
+              onPressed: () {
+                if (urlController.text.isNotEmpty &&
+                    titleController.text.isNotEmpty &&
+                    categoryController.text.isNotEmpty) {
+                  _databaseService.addLink({
+                    'url': urlController.text,
+                    'title': titleController.text,
+                    'category': categoryController.text,
+                  });
+                  urlController.clear();
+                  titleController.clear();
+                  categoryController.clear();
+                  Navigator.of(context).pop();
+                }
+              },
             ),
           ],
         );
