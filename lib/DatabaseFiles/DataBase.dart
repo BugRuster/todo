@@ -2,13 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
   final CollectionReference taskCollection =
-  FirebaseFirestore.instance.collection('Tasks');
+      FirebaseFirestore.instance.collection('Tasks');
   final CollectionReference categoryCollection =
-  FirebaseFirestore.instance.collection('Categories');
+      FirebaseFirestore.instance.collection('Categories');
 
   // Add a new category
   Future addCategory(String categoryName) async {
-    return await categoryCollection.doc(categoryName).set({'name': categoryName});
+    return await categoryCollection
+        .doc(categoryName)
+        .set({'name': categoryName});
   }
 
   // Delete a category
@@ -40,5 +42,29 @@ class DatabaseService {
   // Delete a task
   Future deleteTask(String taskId) async {
     return await taskCollection.doc(taskId).delete();
+  }
+
+  final CollectionReference linkCollection =
+  FirebaseFirestore.instance.collection('Links');
+
+  // Add a new link
+  Future addLink(Map<String, dynamic> linkData) async {
+    String id = FirebaseFirestore.instance.collection('Links').doc().id;
+    return await linkCollection.doc(id).set(linkData);
+  }
+
+  // Stream of links for a specific category
+  Stream<QuerySnapshot> getLinks(String category) {
+    return linkCollection.where('category', isEqualTo: category).snapshots();
+  }
+
+  // Update a link (if needed)
+  Future updateLink(String linkId, Map<String, dynamic> updatedData) async {
+    return await linkCollection.doc(linkId).update(updatedData);
+  }
+
+  // Delete a link
+  Future deleteLink(String linkId) async {
+    return await linkCollection.doc(linkId).delete();
   }
 }
