@@ -1,83 +1,192 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:random_string/random_string.dart';
-
 import '../DatabaseFiles/DataBase.dart';
 
 class TODO_1 extends StatefulWidget {
-  const TODO_1({super.key});
-
   @override
   State<TODO_1> createState() => _TODO_1State();
 }
 
 class _TODO_1State extends State<TODO_1> {
-  bool Personal = true, College = false, Home = false;
-  bool suggest = false;
-  TextEditingController task = TextEditingController();
-  Stream? todoStream;
-
-  getonTheLoad() async {
-    todoStream = await DatabaseService().getTask(Personal
-        ? "Personal"
-        : College
-            ? "College"
-            : "Home"
-    );
-    setState(() {});
-  }
+  String selectedCategory = 'Personal'; // default category
+  TextEditingController taskController = TextEditingController();
+  TextEditingController categoryController = TextEditingController();
+  DatabaseService databaseService = DatabaseService();
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
+  void _onCheckboxChanged(String taskId, bool newValue) async {
+    // Update the task's completion status
+    await databaseService.updateTask(taskId, {'completed': newValue});
 
-  Widget getWork() {
+    if (newValue) {
+      // Wait for 5 seconds before deleting the task
+      Future.delayed(Duration(seconds: 5), () async {
+        await databaseService.deleteTask(taskId);
+        // Optionally, trigger a UI update if necessary
+      });
+    }
+  }
+
+  StreamBuilder<dynamic> _categoryList() {
     return StreamBuilder(
-      stream: todoStream,
+      stream: databaseService.categories,
       builder: (context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
-            ? Expanded(
-                child: ListView.builder(
-                  itemCount: snapshot.data.docs.length,
-                  itemBuilder: (context, index) {
-                    DocumentSnapshot docSnap = snapshot.data.docs[index];
-                    return CheckboxListTile(
-                      activeColor: Colors.white,
-                      checkColor: Colors.blue,
-                      title: Text(docSnap["task"]),
-                      value: docSnap["Yes"],
-                      onChanged: (newValues) {
-                        setState(() async{
-                          await DatabaseService().tickMethod(docSnap["Id"], Personal
-                              ? "Personal"
-                              : College
-                                  ? "College"
-                                  : "Home");
-                          setState(() {
-                            Future.delayed(Duration(seconds: 5), () {
-                              DatabaseService().removeMethod(docSnap["Id"], Personal
-                                  ? "Personal"
-                                  : College
-                                  ? "College"
-                                  : "Home");
-                            });
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
+        var categories = snapshot.data.docs;
+        return Container(
+          height: 60,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: categories.length,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedCategory = categories[index]['name'];
+                  });
+                },
+                onLongPress: () {
+                  _deleteCategoryDialog(categories[index]['name']);
+                },
+                child: Chip(
+                  label: Text(categories[index]['name']),
+                  backgroundColor: selectedCategory == categories[index]['name']
+                      ? Colors.blue
+                      : Colors.grey,
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
 
-                          });
-                          getonTheLoad();
-                        });
-                      },
-                      controlAffinity: ListTileControlAffinity.leading,
-                    );
+  StreamBuilder<dynamic> _taskList() {
+    return StreamBuilder(
+      stream: databaseService.getTasks(selectedCategory),
+      builder: (context, AsyncSnapshot snapshot) {
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
+        var tasks = snapshot.data.docs;
+        return Expanded(
+          child: ListView.builder(
+            itemCount: tasks.length,
+            itemBuilder: (context, index) {
+              var task = tasks[index];
+              return ListTile(
+                title: Text(task['task']),
+                trailing: Checkbox(
+                  value: task['completed'],
+                  onChanged: (bool? value) {
+                    _onCheckboxChanged(task.id, value ?? false);
                   },
                 ),
-              )
-            : Center(
-                child: CircularProgressIndicator(),
               );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _addTaskDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add New Task'),
+          content: TextField(
+            controller: taskController,
+            decoration: InputDecoration(hintText: 'Enter your task'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Add'),
+              onPressed: () {
+                String taskId = randomAlphaNumeric(10);
+                databaseService.addTask({
+                  'task': taskController.text,
+                  'completed': false,
+                  'category': selectedCategory,
+                  'Id': taskId,
+                });
+                taskController.clear();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _addCategoryDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add New Category'),
+          content: TextField(
+            controller: categoryController,
+            decoration: InputDecoration(hintText: 'Enter category name'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Add'),
+              onPressed: () {
+                databaseService.addCategory(categoryController.text);
+                categoryController.clear();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteCategoryDialog(String categoryName) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Category'),
+          content: Text('Are you sure you want to delete "$categoryName"?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () {
+                databaseService.deleteCategory(categoryName);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
       },
     );
   }
@@ -85,232 +194,25 @@ class _TODO_1State extends State<TODO_1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-        splashColor: Colors.lightBlueAccent,
-        onPressed: () {
-          openBox();
-        },
-        child: Icon(
-          Icons.add,
-          color: Colors.blue,
-          size: 35,
-        ),
-      ),
-      body: Container(
-        padding: EdgeInsets.only(top: 70, left: 20, right: 20, bottom: 20),
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Colors.blue, Colors.black],
+      appBar: AppBar(
+        title: Text('TODO List'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: _addCategoryDialog,
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              child: Text(
-                "Welcome!",
-                style: TextStyle(fontSize: 25, color: Colors.white),
-              ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              child: Text(
-                "Anurag",
-                style: TextStyle(
-                    fontSize: 40,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              child: Text(
-                "Let's get started with your tasks !",
-                style: TextStyle(fontSize: 20, color: Colors.white60),
-              ),
-            ),
-            SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Personal
-                    ? Material(
-                        elevation: 5,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            "Personal",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ),
-                      )
-                    : GestureDetector(
-                        onTap: () async {
-                            Personal = true;
-                            College = false;
-                            Home = false;
-                            await getonTheLoad();
-                            setState(() {
-
-                            });
-
-                        },
-                        child: Text(
-                          "Personal",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                College
-                    ? Material(
-                        elevation: 5,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            "College",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ),
-                      )
-                    : GestureDetector(
-                        onTap: () async {
-                            Personal = false;
-                            College = true;
-                            Home = false;
-                            await getonTheLoad();
-                            setState(() {
-
-                            });
-                        },
-                        child: Text(
-                          "College",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-                Home
-                    ? Material(
-                        elevation: 5,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            "Home",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ),
-                      )
-                    : GestureDetector(
-                        onTap: () async {
-                            Personal = false;
-                            College = false;
-                            Home = true;
-                            await getonTheLoad();
-                            setState(() {
-
-                            });
-                        },
-                        child: Text(
-                          "Home",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ),
-              ],
-            ),
-            SizedBox(height: 30),
-            getWork(),
-          ],
-        ),
+        ],
+      ),
+      body: Column(
+        children: [
+          _categoryList(),
+          _taskList(),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: _addTaskDialog,
       ),
     );
   }
-
-  Future openBox() {
-    return showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              content: SingleChildScrollView(
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Icon(Icons.arrow_back_ios),
-                          ),
-                          SizedBox(width: 20),
-                          Text(
-                            "Add Task",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: TextField(
-                          controller: task,
-                          decoration: InputDecoration(
-                            hintText: "Enter Task",
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            String id = randomAlphaNumeric(10);
-                            Map<String, dynamic> userTodo = {
-                              "task": task.text,
-                              "Id": id,
-                              "Yes": false,
-                            };
-                            Personal
-                                ? DatabaseService()
-                                    .addPersonalTask(userTodo, id)
-                                : College
-                                    ? DatabaseService()
-                                        .addCollegeTask(userTodo, id)
-                                    : DatabaseService()
-                                        .addHomeTask(userTodo, id);
-                            Navigator.pop(context);
-                          },
-                          child: Text("Add Task"),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ));
-  }
 }
-// this code is done only for To-Do functionality

@@ -1,40 +1,44 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
-  Future addPersonalTask(
-      Map<String, dynamic> userPersonalMap, String id) async {
-    return await FirebaseFirestore.instance
-        .collection('Personal')
-        .doc(id)
-        .set(userPersonalMap);
+  final CollectionReference taskCollection =
+  FirebaseFirestore.instance.collection('Tasks');
+  final CollectionReference categoryCollection =
+  FirebaseFirestore.instance.collection('Categories');
+
+  // Add a new category
+  Future addCategory(String categoryName) async {
+    return await categoryCollection.doc(categoryName).set({'name': categoryName});
   }
-  Future addCollegeTask(
-      Map<String, dynamic> userPersonalMap, String id) async {
-    return await FirebaseFirestore.instance
-        .collection('College')
-        .doc(id)
-        .set(userPersonalMap);
+
+  // Delete a category
+  Future deleteCategory(String categoryName) async {
+    return await categoryCollection.doc(categoryName).delete();
   }
-  Future addHomeTask(
-      Map<String, dynamic> userPersonalMap, String id) async {
-    return await FirebaseFirestore.instance
-        .collection('Home')
-        .doc(id)
-        .set(userPersonalMap);
+
+  // Stream of categories
+  Stream<QuerySnapshot> get categories {
+    return categoryCollection.snapshots();
   }
-  Future <Stream<QuerySnapshot>> getTask(String task) async {
-    return await FirebaseFirestore.instance.collection(task).snapshots();
+
+  // Add a new task
+  Future addTask(Map<String, dynamic> taskData) async {
+    String id = FirebaseFirestore.instance.collection('Tasks').doc().id;
+    return await taskCollection.doc(id).set(taskData);
   }
-  tickMethod(String id, String task) async {
-    return await FirebaseFirestore.instance
-        .collection(task)
-        .doc(id)
-        .update({"Yes": true});
+
+  // Stream of tasks for a specific category
+  Stream<QuerySnapshot> getTasks(String category) {
+    return taskCollection.where('category', isEqualTo: category).snapshots();
   }
-  removeMethod(String id, String task) async {
-    return await FirebaseFirestore.instance
-        .collection(task)
-        .doc(id)
-        .delete();
+
+  // Update a task
+  Future updateTask(String taskId, Map<String, dynamic> updatedData) async {
+    return await taskCollection.doc(taskId).update(updatedData);
+  }
+
+  // Delete a task
+  Future deleteTask(String taskId) async {
+    return await taskCollection.doc(taskId).delete();
   }
 }
