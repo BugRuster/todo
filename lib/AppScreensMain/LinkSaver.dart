@@ -52,6 +52,7 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
         stream: _databaseService.getLinks(selectedCategory),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
+            print('StreamBuilder Error: ${snapshot.error}');
             return Text('Error: ${snapshot.error}');
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -62,6 +63,9 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
             title: doc['title'],
             category: doc['category'],
           )).toList() ?? [];
+    if (links != null) {
+      print('Fetched ${links.length} links');
+    }
 
           return ListView.builder(
             itemCount: links.length,

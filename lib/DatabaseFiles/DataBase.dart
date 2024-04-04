@@ -55,6 +55,7 @@ class DatabaseService {
 
   // Stream of links for a specific category
   Stream<QuerySnapshot> getLinks(String category) {
+    print('Querying for category: $category');
     return linkCollection.where('category', isEqualTo: category).snapshots();
   }
 
