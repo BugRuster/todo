@@ -1,8 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../DatabaseFiles/DataBase.dart';
-
 void main() {
   runApp(LinkSaver());
 }
@@ -26,8 +24,16 @@ class LinkItem {
   String url;
   String title;
   String category;
+  bool isSelected;
+  DocumentSnapshot doc;
 
-  LinkItem({required this.url, required this.title, required this.category});
+  LinkItem({
+    required this.url,
+    required this.title,
+    required this.category,
+    this.isSelected = false,
+    required this.doc,
+  });
 }
 
 class LinkSaverHome extends StatefulWidget {
@@ -37,7 +43,7 @@ class LinkSaverHome extends StatefulWidget {
 
 class _LinkSaverHomeState extends State<LinkSaverHome> {
   final DatabaseService _databaseService = DatabaseService();
-  String selectedCategory = 'General'; // Default category or dynamic selection
+  List<LinkItem> selectedLinks = [];
   TextEditingController urlController = TextEditingController();
   TextEditingController titleController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
@@ -47,22 +53,28 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Link Saver'),
+        actions: [
+          if (selectedLinks.isNotEmpty)
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: _deleteSelectedLinks,
+            ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _databaseService.getAllLinks(),
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
+          if (snapshot.hasError) return Text('Error: ${snapshot.error}');
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator();
           }
 
           var links = snapshot.data?.docs.map((doc) {
             return LinkItem(
-              url: doc.get('url'),
-              title: doc.get('title'),
-              category: doc.get('category'),
+              url: doc['url'],
+              title: doc['title'],
+              category: doc['category'],
+              doc: doc,
             );
           }).toList() ?? [];
 
@@ -70,14 +82,33 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
             itemCount: links.length,
             itemBuilder: (context, index) {
               return Card(
-                margin: EdgeInsets.all(8),
+                color: links[index].isSelected ? Colors.blueGrey[700] : null,
                 child: ListTile(
                   title: Text(links[index].title, style: TextStyle(color: Colors.white)),
                   subtitle: Text(links[index].url, style: TextStyle(color: Colors.grey)),
-                  trailing: Chip(
-                    label: Text(links[index].category),
-                    backgroundColor: Colors.blueGrey,
+                  trailing: Checkbox(
+                    value: links[index].isSelected,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        links[index].isSelected = value!;
+                        if (value) {
+                          selectedLinks.add(links[index]);
+                        } else {
+                          selectedLinks.removeWhere((element) => element.doc.id == links[index].doc.id);
+                        }
+                      });
+                    },
                   ),
+                  onLongPress: () {
+                    setState(() {
+                      links[index].isSelected = !links[index].isSelected;
+                      if (links[index].isSelected) {
+                        selectedLinks.add(links[index]);
+                      } else {
+                        selectedLinks.removeWhere((element) => element.doc.id == links[index].doc.id);
+                      }
+                    });
+                  },
                 ),
               );
             },
@@ -142,5 +173,14 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
         );
       },
     );
+  }
+
+  void _deleteSelectedLinks() async {
+    for (var link in selectedLinks) {
+      await _databaseService.deleteLink(link.doc.id);
+    }
+    setState(() {
+      selectedLinks.clear();
+    });
   }
 }
