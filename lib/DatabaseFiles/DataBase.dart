@@ -5,6 +5,8 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('Tasks');
   final CollectionReference categoryCollection =
       FirebaseFirestore.instance.collection('Categories');
+  final CollectionReference linkCollection =
+    FirebaseFirestore.instance.collection('Links');
 
   // Add a new category
   Future addCategory(String categoryName) async {
@@ -44,8 +46,6 @@ class DatabaseService {
     return await taskCollection.doc(taskId).delete();
   }
 
-  final CollectionReference linkCollection =
-  FirebaseFirestore.instance.collection('Links');
 
   // Add a new link
   Future addLink(Map<String, dynamic> linkData) async {
@@ -67,5 +67,10 @@ class DatabaseService {
   // Delete a link
   Future deleteLink(String linkId) async {
     return await linkCollection.doc(linkId).delete();
+  }
+
+  // Retrieve all links as a Stream
+  Stream<QuerySnapshot> getAllLinks() {
+    return linkCollection.snapshots();
   }
 }

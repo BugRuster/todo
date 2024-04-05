@@ -48,24 +48,23 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
       appBar: AppBar(
         title: Text('Link Saver'),
       ),
-      body: StreamBuilder(
-        stream: _databaseService.getLinks(selectedCategory),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _databaseService.getAllLinks(),
+        builder: (context, snapshot) {
           if (snapshot.hasError) {
-            print('StreamBuilder Error: ${snapshot.error}');
             return Text('Error: ${snapshot.error}');
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator();
           }
-          var links = snapshot.data?.docs.map((doc) => LinkItem(
-            url: doc['url'],
-            title: doc['title'],
-            category: doc['category'],
-          )).toList() ?? [];
-    if (links != null) {
-      print('Fetched ${links.length} links');
-    }
+
+          var links = snapshot.data?.docs.map((doc) {
+            return LinkItem(
+              url: doc.get('url'),
+              title: doc.get('title'),
+              category: doc.get('category'),
+            );
+          }).toList() ?? [];
 
           return ListView.builder(
             itemCount: links.length,
