@@ -47,18 +47,20 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
   TextEditingController urlController = TextEditingController();
   TextEditingController titleController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
+  bool isInDeleteMode = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Link Saver'),
-        actions: [
+        actions: <Widget>[
           if (selectedLinks.isNotEmpty)
-            IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: _deleteSelectedLinks,
-            ),
+            if (isInDeleteMode)  // Show delete icon only in delete mode
+              IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: _deleteSelectedLinks,
+              ),
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -81,37 +83,30 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
           return ListView.builder(
             itemCount: links.length,
             itemBuilder: (context, index) {
+              var link = links[index];
               return Card(
-                color: links[index].isSelected ? Colors.blueGrey[700] : null,
+                color: link.isSelected ? Colors.blueGrey[700] : null,
                 child: ListTile(
-                  title: Text(links[index].title, style: TextStyle(color: Colors.white)),
-                  subtitle: Text(links[index].url, style: TextStyle(color: Colors.grey)),
-                  trailing: Checkbox(
-                    value: links[index].isSelected,
+                  title: Text(link.title, style: TextStyle(color: Colors.white)),
+                  subtitle: Text(link.url, style: TextStyle(color: Colors.grey)),
+                  trailing: isInDeleteMode ? Checkbox(
+                    value: link.isSelected,
                     onChanged: (bool? value) {
                       setState(() {
-                        links[index].isSelected = value!;
+                        link.isSelected = value!;
                         if (value) {
-                          selectedLinks.add(links[index]);
+                          selectedLinks.add(link);
                         } else {
-                          selectedLinks.removeWhere((element) => element.doc.id == links[index].doc.id);
+                          selectedLinks.removeWhere((element) => element.doc.id == link.doc.id);
                         }
                       });
                     },
-                  ),
-                  onLongPress: () {
-                    setState(() {
-                      links[index].isSelected = !links[index].isSelected;
-                      if (links[index].isSelected) {
-                        selectedLinks.add(links[index]);
-                      } else {
-                        selectedLinks.removeWhere((element) => element.doc.id == links[index].doc.id);
-                      }
-                    });
-                  },
+                  ) : null,
+                  onLongPress: () => _onLinkLongPress(link),
                 ),
               );
             },
+
           );
         },
       ),
@@ -121,6 +116,20 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
         backgroundColor: Colors.blueGrey,
       ),
     );
+  }
+
+  void _onLinkLongPress(LinkItem link) {
+    setState(() {
+      if (!isInDeleteMode) {
+        isInDeleteMode = true;
+      }
+      link.isSelected = !link.isSelected;
+      if (link.isSelected) {
+        selectedLinks.add(link);
+      } else {
+        selectedLinks.removeWhere((element) => element.doc.id == link.doc.id);
+      }
+    });
   }
 
   void _addNewLink() {
