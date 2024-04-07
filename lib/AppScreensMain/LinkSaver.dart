@@ -184,6 +184,8 @@ class _LinkSaverHomeState extends State<LinkSaverHome> {
     );
   }
 
+  // firebase delete link function
+
   void _deleteSelectedLinks() async {
     for (var link in selectedLinks) {
       await _databaseService.deleteLink(link.doc.id);
